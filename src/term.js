@@ -5687,15 +5687,32 @@ function indexOf(obj, el) {
   return -1;
 }
 
+// The RegexpString below is borrowed from https://github.com/chjj/blessed/blob/master/lib/unicode.js#L571-L602
+var wideCharPattern = new RegExp('('
+  + '['
+  + '\\u1100-\\u115f' // Hangul Jamo init. consonants
+  + '\\u2329\\u232a'
+  + '\\u2e80-\\u303e\\u3040-\\ua4cf' // CJK ... Yi
+  + '\\uac00-\\ud7a3' // Hangul Syllables
+  + '\\uf900-\\ufaff' // CJK Compatibility Ideographs
+  + '\\ufe10-\\ufe19' // Vertical forms
+  + '\\ufe30-\\ufe6f' // CJK Compatibility Forms
+  + '\\uff00-\\uff60' // Fullwidth Forms
+  + '\\uffe0-\\uffe6'
+  + ']'
+
+  + '|'
+
+  // 0x20000 - 0x2fffd:
+  + '[\\ud840-\\ud87f][\\udc00-\\udffd]'
+  + '|'
+  // 0x30000 - 0x3fffd:
+  + '[\\ud880-\\ud8bf][\\udc00-\\udffd]'
+
+  + ')');
+
 function isWide(ch) {
-  if (ch <= '\uff00') return false;
-  return (ch >= '\uff01' && ch <= '\uffbe')
-      || (ch >= '\uffc2' && ch <= '\uffc7')
-      || (ch >= '\uffca' && ch <= '\uffcf')
-      || (ch >= '\uffd2' && ch <= '\uffd7')
-      || (ch >= '\uffda' && ch <= '\uffdc')
-      || (ch >= '\uffe0' && ch <= '\uffe6')
-      || (ch >= '\uffe8' && ch <= '\uffee');
+  return wideCharPattern.test(ch);
 }
 
 function matchColor(r1, g1, b1) {
