@@ -1338,6 +1338,11 @@ Terminal.prototype.refresh = function(start, end) {
   }
 
   if (parent) parent.appendChild(this.element);
+  
+  if (this.focus) {
+    this.element.focus();
+    this.focus();
+  }
 };
 
 Terminal.prototype._cursorBlink = function() {
